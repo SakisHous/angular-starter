@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PersonComponent } from './person/person.component';
 import { Person } from './interfaces/person';
@@ -6,6 +6,10 @@ import { PersonAltComponent } from './person-alt/person-alt.component';
 import { EventBindComponent } from './event-bind/event-bind.component';
 import { OutputDemoComponent } from './output-demo/output-demo.component';
 import { PersonCardComponent } from './person-card/person-card.component';
+import { TemplateDrivenFormsComponent } from './template-driven-forms/template-driven-forms.component';
+import { ReactiveFormComponent } from './reactive-form/reactive-form.component';
+import { UserAppService } from './user-app.service';
+import { CrudDemoComponent } from './crud-demo/crud-demo/crud-demo.component';
 
 @Component({
   selector: 'app-root',
@@ -16,13 +20,16 @@ import { PersonCardComponent } from './person-card/person-card.component';
     PersonAltComponent, 
     EventBindComponent, 
     OutputDemoComponent,
-    PersonCardComponent
+    PersonCardComponent,
+    TemplateDrivenFormsComponent,
+    ReactiveFormComponent,
+    CrudDemoComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
   // title = 'angular-introduction';
   name: string = "sakis-angular";
   lastname: string = "Angular JS"; 
@@ -34,91 +41,20 @@ export class AppComponent {
     email: "test@aueb.gr",
     address: "Patision 255"
   }
+
+  users: Person[] = new Array()
   
-  sendUser: Person | undefined;
+  sendUser: Person | undefined
   
-  users: Person[] = [
-    {
-      givenName: 'John',
-      surName: 'Doe',
-      age: 30,
-      email: 'john.doe@example.com',
-      address: '123 Main St',
-      photoURL: 'https://i.pravatar.cc/?img=1'
-    },
-    {
-      givenName: 'Jane',
-      surName: 'Doe',
-      age: 28,
-      email: 'jane.doe@example.com',
-      address: '123 Main St',
-      photoURL: 'https://i.pravatar.cc/?img=2'
-    },
-    {
-      givenName: 'Jim',
-      surName: 'Brown',
-      age: 45,
-      email: 'jim.brown@example.com',
-      address: '456 Park Ave',
-      photoURL: 'https://i.pravatar.cc/?img=3'
-    },
-    {
-      givenName: 'Jill',
-      surName: 'Brown',
-      age: 42,
-      email: 'jill.brown@example.com',
-      address: '456 Park Ave',
-      photoURL: 'https://i.pravatar.cc/?img=4'
-    },
-    {
-      givenName: 'Jake',
-      surName: 'Smith',
-      age: 36,
-      email: 'jake.smith@example.com',
-      address: '789 Broadway',
-      photoURL: 'https://i.pravatar.cc/?img=5'
-    },
-    {
-      givenName: 'Judy',
-      surName: 'Smith',
-      age: 34,
-      email: 'judy.smith@example.com',
-      address: '789 Broadway',
-      photoURL: 'https://i.pravatar.cc/?img=6'
-    },
-    {
-      givenName: 'Jack',
-      surName: 'Johnson',
-      age: 50,
-      email: 'jack.johnson@example.com',
-      address: '321 Oak St',
-      photoURL: 'https://i.pravatar.cc/?img=7'
-    },
-    {
-      givenName: 'Julie',
-      surName: 'Johnson',
-      age: 48,
-      email: 'julie.johnson@example.com',
-      address: '321 Oak St',
-      photoURL: 'https://i.pravatar.cc/?img=8'
-    },
-    {
-      givenName: 'Jerry',
-      surName: 'Davis',
-      age: 55,
-      email: 'jerry.davis@example.com',
-      address: '654 Pine St',
-      photoURL: 'https://i.pravatar.cc/?img=9'
-    },
-    {
-      givenName: 'June',
-      surName: 'Davis',
-      age: 53,
-      email: 'june.davis@example.com',
-      address: '654 Pine St',
-      photoURL: 'https://i.pravatar.cc/?img=10'
-    }
-  ]
+  constructor(private userAppService: UserAppService = Inject(UserAppService)) {
+  }
+
+  ngOnInit(): void {
+    this.userAppService.getAllUsers().subscribe((users) => {
+      this.users = users
+      console.log(this.users)
+    })
+  }
 
   onDeleteUser(i: number) {
     this.users.splice(i, 1)
@@ -126,5 +62,9 @@ export class AppComponent {
 
   onSendUser(user: Person) {
     this.sendUser = user
+  }
+
+  onNewPerson(person: Person) {
+    this.users.push(person)
   }
 }
